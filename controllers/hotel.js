@@ -85,24 +85,25 @@ export const getHotel = async (req, res,next) => {
         }
     
 //get all
+
+
 export const getHotels = async (req, res, next) => {
   const { min, max, limit, ...others } = req.query; // Extract min, max, and limit
-
   try {
     const hotels = await Hotel.find({
       ...others,
       cheapestPrice: { 
-        $gt: min ? Number(min) : 1,  // Convert min to number, default to 1
-        $lt: max ? Number(max) : 999 // Convert max to number, default to 999
-      }
-    })
-    .limit(req.query.limit); // Convert limit to a number, use 0 if not provided
+        $gt: Number(min) || 1, // Convert min to number, default 1
+        $lt: Number(max) || 999, // Convert max to number, default 999
+      },
+    }).limit(Number(limit) || 0); // Convert limit to number, default 0 (no limit)
 
     res.status(200).json(hotels);
   } catch (err) {
     next(err);
   }
 };
+
 
 
 export const countByCity = async (req,res,next)=>{
